@@ -2,7 +2,7 @@
   "exclude": "(^LICENSE)",
   "linters": {
     "sample": {
-      "type": "pep8"
+      "type": "flake8"
     }
   }
 }
