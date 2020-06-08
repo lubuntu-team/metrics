@@ -1,0 +1,8 @@
+{
+  "exclude": "(^LICENSE)",
+  "linters": {
+    "sample": {
+      "type": "pep8"
+    }
+  }
+}
