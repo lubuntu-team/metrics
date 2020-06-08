@@ -19,6 +19,7 @@ from jenkinsapi.custom_exceptions import NoBuildData
 from jenkinsapi.jenkins import Jenkins
 from os import getenv
 
+
 class JenkinsModule:
     """Jenkins module for the Metrics program"""
 
@@ -102,7 +103,6 @@ class JenkinsModule:
         # Match the variable names with the column names in the db
         nonpassing, failing, total = self._get_data()
         date = "strftime('%s', 'now')"
-
 
         # Craft the str
         command = "INSERT INTO jenkins VALUES ({}, {}, {}, {});".format(
