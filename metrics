@@ -15,5 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from modules.jenkins import JenkinsModule
+
 if __name__ == "__main__":
-    print("Coming soon.")
+    jenkins = JenkinsModule()
+    print(jenkins.sqlite_setup())
+    print(jenkins.sqlite_add())
