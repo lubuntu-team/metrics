@@ -15,9 +15,25 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import sqlite3
 from modules.jenkins import JenkinsModule
 
+ENABLED_MODULES = [JenkinsModule]
+
+def sqlite_run(command, db=":memory:"):
+    """Run the given SQLite command on our db
+
+    command must be a command that SQLite can run
+    db must be a valid path to a db, or it's done in memory
+    """
+    conn = sqlite3.connect(db)
+    c = conn.cursor()
+    c.execute(command)
+    conn.commit()
+    conn.close()
+
 if __name__ == "__main__":
-    jenkins = JenkinsModule()
-    print(jenkins.sqlite_setup())
-    print(jenkins.sqlite_add())
+    for module in ENABLED_MODULES:
+        module = module()
+        sqlite_run(module.sqlite_setup())
+        sqlite_run(module.sqlite_add())
