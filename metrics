@@ -20,6 +20,7 @@ from modules.jenkins import JenkinsModule
 
 ENABLED_MODULES = [JenkinsModule]
 
+
 def sqlite_run(command, db=":memory:"):
     """Run the given SQLite command on our db
 
@@ -32,8 +33,14 @@ def sqlite_run(command, db=":memory:"):
     conn.commit()
     conn.close()
 
+
+def main(module):
+    """Given a specific module, set it up and insert recent values"""
+    module = module()
+    sqlite_run(module.sqlite_setup())
+    sqlite_run(module.sqlite_add())
+
+
 if __name__ == "__main__":
     for module in ENABLED_MODULES:
-        module = module()
-        sqlite_run(module.sqlite_setup())
-        sqlite_run(module.sqlite_add())
+        main(module)
