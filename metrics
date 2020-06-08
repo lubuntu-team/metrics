@@ -21,7 +21,7 @@ from modules.jenkins import JenkinsModule
 ENABLED_MODULES = [JenkinsModule]
 
 
-def sqlite_run(command, db=":memory:"):
+def sqlite_run(command, db=":memory:", return_output=False):
     """Run the given SQLite command on our db
 
     command must be a command that SQLite can run
@@ -31,6 +31,12 @@ def sqlite_run(command, db=":memory:"):
     c = conn.cursor()
     c.execute(command)
     conn.commit()
+
+    # Make sure we return an output if requested
+    if return_output:
+        rows = c.fetchall()
+        return rows
+
     conn.close()
 
 
