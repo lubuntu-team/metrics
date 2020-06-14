@@ -29,22 +29,29 @@ def sqlite_run(command, db=":memory:", return_output=False):
     """
     conn = sqlite3.connect(db)
     c = conn.cursor()
-    c.execute(command)
+    for cmd in command:
+        c.execute(cmd)
     conn.commit()
 
     # Make sure we return an output if requested
-    if return_output:
-        rows = c.fetchall()
-        return rows
-
-    conn.close()
+    try:
+        if return_output:
+            rows = c.fetchall()
+            return rows
+    except Exception as e:
+        print(e)
+    finally:
+        conn.close()
 
 
 def main(module):
     """Given a specific module, set it up and insert recent values"""
     module = module()
-    sqlite_run(module.sqlite_setup())
-    sqlite_run(module.sqlite_add())
+    run = []
+    run.append(module.sqlite_setup())
+    run.append(module.sqlite_add())
+    run.append(module.sqlite_time_range(days=10))
+    print(sqlite_run(run, return_output=True))
 
 
 if __name__ == "__main__":
