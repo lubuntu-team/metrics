@@ -15,9 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import datetime
+import requests_cache
+import time
 from jenkinsapi.custom_exceptions import NoBuildData
 from jenkinsapi.jenkins import Jenkins
 from os import getenv
+
+requests_cache.install_cache("jenkins", backend="sqlite", expire_after=300)
 
 
 class JenkinsModule:
@@ -107,5 +112,22 @@ class JenkinsModule:
         # Craft the str
         command = "INSERT INTO jenkins VALUES ({}, {}, {}, {});".format(
                 date, nonpassing, failing, total)
+
+        return command
+
+    def sqlite_time_range(self, days):
+        """Get the rows which have been inserted given days
+
+        e.g. if days is 180, it gets all of the values which have been
+        inserted in the past 180 days.
+
+        Note: this just returns the command to be ran, it doesn't actually run
+        """
+
+        now = datetime.datetime.now()
+        timedelta = datetime.timedelta(days=days)
+        unix_time = int(time.mktime((now - timedelta).timetuple()))
+
+        command = "SELECT * FROM jenkins WHERE date > %s;" % unix_time
 
         return command
