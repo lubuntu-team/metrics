@@ -188,7 +188,7 @@ class JenkinsModule:
 
         # Write it back to the filename in the output dir
         with open(path.join("output", "jenkins_%sdays.html" % days),
-                "w+") as f:
+                  "w+") as f:
             f.write(template)
 
         # Return the averages for use in the summary

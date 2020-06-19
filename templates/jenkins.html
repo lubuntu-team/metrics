@@ -8,15 +8,11 @@
         <!-- Import Chart.js 2.9.3 -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js"></script>
 
-	<!-- Import Bootstrap 4.3.1 -->
+        <!-- Import Bootstrap 4.3.1 -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     </head>
     <body>
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col">
-                </div>
-            </div>
             <div class="row justify-content-center">
                 <div class="col" style="text-align: center;">
                     <h1>Jenkins data for the past {{ days }} day(s)</h1>
@@ -34,58 +30,58 @@
             var myChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                datasets: [
-		    {
-                        label: 'Failing Jobs',
-			backgroundColor: "#FF0000",
-			//borderColor: "#FF0000",
-                        data: [
-			    {% for timestamp, num in jenkins.failing %}
-			    {
-			      t: new Date({{ timestamp }} * 1000),
-                	      y: {{ num }}
-			    },
-                            {% endfor %}
-                        ]
-                    },
-		    {
-                        label: 'Non-passing Jobs',
-			backgroundColor: "#FFFF00",
-			//borderColor: "#FFFF00",
-                        data: [
-			    {% for timestamp, num in jenkins.nonpassing %}
-			    {
-			      t: new Date({{ timestamp }} * 1000),
-                	      y: {{ num }}
-			    },
-                            {% endfor %}
-                        ]
-                    },
-		    {
-                        label: 'Total Jobs',
-			backgroundColor: "#003A72",
-			//borderColor: "#003A72",
-                        data: [
-			    {% for timestamp, num in jenkins.total %}
-			    {
-			      t: new Date({{ timestamp }} * 1000),
-                	      y: {{ num }}
-			    },
-                            {% endfor %}
-                        ]
-                    },
-		]
-              },
-              options: {
-                scales: {
-                  xAxes: [{
-                    type: 'time',
-		    time: {
-                      unit: 'day'
+                    datasets: [
+                        {
+                            label: 'Failing Jobs',
+                            backgroundColor: "#FF0000",
+                            //borderColor: "#FF0000",
+                            data: [
+                                {% for timestamp, num in jenkins.failing %}
+                                {
+                                    t: new Date({{ timestamp }} * 1000),
+                                    y: {{ num }}
+                                },
+                                {% endfor %}
+                            ]
+                        },
+                        {
+                            label: 'Non-passing Jobs',
+                            backgroundColor: "#FFFF00",
+                            //borderColor: "#FFFF00",
+                            data: [
+                                {% for timestamp, num in jenkins.nonpassing %}
+                                {
+                                    t: new Date({{ timestamp }} * 1000),
+                                    y: {{ num }}
+                                },
+                                {% endfor %}
+                            ]
+                        },
+                        {
+                            label: 'Total Jobs',
+                            backgroundColor: "#003A72",
+                            //borderColor: "#003A72",
+                            data: [
+                                {% for timestamp, num in jenkins.total %}
+                                {
+                                    t: new Date({{ timestamp }} * 1000),
+                                    y: {{ num }}
+                                },
+                                {% endfor %}
+                            ]
+                        },
+                    ]
+                },
+                options: {
+                    scales: {
+                        xAxes: [{
+                            type: 'time',
+                            time: {
+                                unit: 'day'
+                            }
+                        }]
                     }
-                  }]
                 }
-              }
             });
         </script>
     </body>

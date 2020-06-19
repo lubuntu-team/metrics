@@ -117,19 +117,19 @@ if __name__ == "__main__":
     # Parse CLI arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("--db-location", type=str, default=":memory:",
-            help="Specify the location for the SQLite database")
+                        help="Specify the location for the SQLite database")
     parser.add_argument("--log", type=str, default="WARNING",
-            help="Default logging level")
+                        help="Default logging level")
     args = parser.parse_args()
 
     # Ensure the logging level is set properly
     num_level = getattr(log, args.log.upper(), None)
     if not isinstance(num_level, int):
-        raise ValueError("Invalid log level: %s" % loglevel)
+        raise ValueError("Invalid log level: %s" % args.log)
 
     # Fully configure the logger
     log.basicConfig(format="%(asctime)s\t%(levelname)s\t%(message)s",
-            level=num_level)
+                    level=num_level)
 
     # Initialize a dict to store data for the summary page
     summary_page = {}

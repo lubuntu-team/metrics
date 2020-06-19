@@ -1,8 +1,9 @@
 {
-  "exclude": "(^LICENSE)",
+  "exclude": "(^LICENSE|.gitignore)",
   "linters": {
-    "sample": {
-      "type": "flake8"
+    "python": {
+      "type": "flake8",
+      "exclude": "(\\.html$)"
     }
   }
 }
