@@ -71,7 +71,8 @@ class JenkinsModule:
             # The goal of this is to identify problematic jobs, and jobs with
             # no existing builds aren't necessarily problematic (yet)
             try:
-                status = val.get_last_build().get_status()
+                status = val.get_last_build().get_status() or \
+                        val.get_last_completed_build().get_status()
             except NoBuildData:
                 status = "SUCCESS"
 
