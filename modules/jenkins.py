@@ -29,6 +29,9 @@ requests_cache.install_cache("jenkins", backend="sqlite", expire_after=300)
 class JenkinsModule:
     """Jenkins module for the Metrics program"""
 
+    def __init__(self):
+        self.name = "Jenkins"
+
     def _auth_jenkins_server(self):
         """Authenticate to the Jenkins server
 
@@ -187,3 +190,6 @@ class JenkinsModule:
         with open(path.join("output", "jenkins_%sdays.html" % days),
                 "w+") as f:
             f.write(template)
+
+        # Return the averages for use in the summary
+        return (average["nonpassing"], average["failing"], average["total"])

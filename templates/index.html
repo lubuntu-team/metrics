@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- HTML5 compliance -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<!-- Import Bootstrap 4.3.1 -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col">
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col" style="text-align: center;">
+                    <h1>Summary for Lubuntu Project Metrics</h1>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col" style="text-align: center;">
+                    <h2>Jenkins Data</h2>
+		    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Time (days)</th>
+				<th>Average Failing</th>
+				<th>Average Non-passing</th>
+				<th>Average Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for day in page.Jenkins %}
+                            <tr>
+                                <td>{{ day }}</td>
+                                {% for avg in page.Jenkins[day] %}
+                                <td>{{ avg }}</td>
+			        {% endfor %}
+                            </tr>
+			    {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

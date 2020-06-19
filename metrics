@@ -18,7 +18,9 @@
 import argparse
 import logging as log
 import sqlite3
+from jinja2 import Template
 from modules.jenkins import JenkinsModule
+from os import path
 
 ENABLED_MODULES = [JenkinsModule]
 
@@ -47,6 +49,40 @@ def sqlite_run(command, db, return_output=False):
         conn.close()
 
 
+def summary():
+    """Reading summary_page, generate a summary page using the averages
+
+    summary_page should be a dict, with keys being the human-readable module
+    name and the value being another dict, which has averages for each day.
+
+    Example: {"foo": {1: (100, 200, 300)}}
+
+    Special-casing is done right in the template file, as different modules
+    are going to have different averages.
+    """
+
+    # Open the template file as a Jinja2 Template
+    t_path = path.join("templates", "index.html")
+    with open(t_path) as templatef:
+        template = ""
+        for text in templatef.readlines():
+            template += text
+        template = Template(template)
+
+    # Render the template with the values from summary_page
+    log.debug("summary_page: " + str(summary_page))
+    template = template.render(page=summary_page)
+
+    # Write it back to the output file
+    # We don't have to worry about creating the output dir, since the
+    # module-specific template rendering should already do this for us
+    #
+    # FIXME: Writing to/from files is done in several places, maybe centralize
+    # the code in its own "internal" module?
+    with open(path.join("output", "index.html"), "w+") as f:
+        f.write(template)
+
+
 def main(module):
     """Given a specific module, set it up and insert recent values"""
 
@@ -57,6 +93,10 @@ def main(module):
     run = [module.sqlite_setup(), module.sqlite_add()]
     log.debug(sqlite_run(run, db=args.db_location))
 
+    # This is going to be a dict of tuples, with the key being the day and
+    # the value being a tuple with the averages
+    _averages = {}
+
     # Pull some useful data and have the module render a template
     # The output is in MODULENAME_DAYday.html
     # This generates a report for each of the given day windows
@@ -66,8 +106,11 @@ def main(module):
         data = sqlite_run(run, db=args.db_location, return_output=True)
         log.debug(data)
 
-        # Render the template
-        module.render_template(day, data)
+        # Render the template, which also returns the average values
+        _averages[day] = module.render_template(day, data)
+
+    # Put the values from _averages on the summary page
+    summary_page[module.name] = _averages
 
 
 if __name__ == "__main__":
@@ -88,6 +131,12 @@ if __name__ == "__main__":
     log.basicConfig(format="%(asctime)s\t%(levelname)s\t%(message)s",
             level=num_level)
 
+    # Initialize a dict to store data for the summary page
+    summary_page = {}
+
     for module in ENABLED_MODULES:
         log.info("Working on %s..." % module.__name__)
         main(module)
+
+    # Render the summary page
+    summary()
