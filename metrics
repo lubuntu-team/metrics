@@ -32,6 +32,7 @@ def sqlite_run(command, db, return_output=False):
     conn = sqlite3.connect(db)
     c = conn.cursor()
     for cmd in command:
+        log.debug("Executing: %s" % cmd)
         c.execute(cmd)
     conn.commit()
 
@@ -48,16 +49,25 @@ def sqlite_run(command, db, return_output=False):
 
 def main(module):
     """Given a specific module, set it up and insert recent values"""
-    module = module()
-    run = []
-    run.append(module.sqlite_setup())
-    run.append(module.sqlite_add())
-    #run.append(module.sqlite_time_range(days=10))
-    log.debug("Commands to be ran: " + str(run))
 
-    # Use --db-location to pass to sqlite
-    log.info("Running SQLite commands")
-    log.debug(sqlite_run(run, db=args.db_location, return_output=True))
+    # Initialize the module
+    module = module()
+
+    # Stage the setup commands to be ran and run them
+    run = [module.sqlite_setup(), module.sqlite_add()]
+    log.debug(sqlite_run(run, db=args.db_location))
+
+    # Pull some useful data and have the module render a template
+    # The output is in MODULENAME_DAYday.html
+    # This generates a report for each of the given day windows
+    for day in (1, 7, 30, 90, 180):
+        # Fetch the data and log to debug
+        run = [module.sqlite_time_range(days=day)]
+        data = sqlite_run(run, db=args.db_location, return_output=True)
+        log.debug(data)
+
+        # Render the template
+        module.render_template(day, data)
 
 
 if __name__ == "__main__":

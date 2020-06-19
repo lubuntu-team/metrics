@@ -20,7 +20,8 @@ import requests_cache
 import time
 from jenkinsapi.custom_exceptions import NoBuildData
 from jenkinsapi.jenkins import Jenkins
-from os import getenv
+from jinja2 import Template
+from os import getenv, makedirs, path
 
 requests_cache.install_cache("jenkins", backend="sqlite", expire_after=300)
 
@@ -131,3 +132,58 @@ class JenkinsModule:
         command = "SELECT * FROM jenkins WHERE date > %s;" % unix_time
 
         return command
+
+    def render_template(self, days, data):
+        """Render a template with days in the filename, given the data
+
+        The above function sqlite_time_range() is ran on the database with
+        some predetermined date ranges. This function actually interprets that
+        data, uses Jinja2 to magically render a template, and voila.
+        """
+
+        # Initialize a (softly) ephemeral dict to store data
+        jenkins = {}
+        _data = {"date": [], "nonpassing": [], "failing": [], "total": []}
+
+        # Put the data from the DB query into _data
+        for row in data:
+            _data["date"].append(row[0])
+            _data["nonpassing"].append(row[1])
+            _data["failing"].append(row[2])
+            _data["total"].append(row[3])
+
+        # Get human-readable averages and throw it in a dict
+        _nonpassing = sum(_data["nonpassing"]) / len(_data["nonpassing"])
+        _nonpassing = format(_nonpassing, ".1f")
+        _failing = sum(_data["failing"]) / len(_data["failing"])
+        _failing = format(_failing, ".1f")
+        _total = sum(_data["total"]) / len(_data["total"])
+        _total = format(_total, ".1f")
+        average = {"nonpassing": _nonpassing,
+                   "failing": _failing,
+                   "total": _total}
+
+        # Assign data to the dict Jinja2 is actually going to use
+        jenkins = {"nonpassing": zip(_data["date"], _data["nonpassing"]),
+                   "failing": zip(_data["date"], _data["failing"]),
+                   "total": zip(_data["date"], _data["total"])}
+
+        # Grab our template from templates/ and store it as a Template
+        t_path = path.join("templates", "jenkins.html")
+        with open(t_path) as templatef:
+            template = ""
+            for text in templatef.readlines():
+                template += text
+            template = Template(template)
+
+        # Render the template
+        template = template.render(jenkins=jenkins, average=average, days=days)
+
+        # Make the output dir if it doesn't already exist
+        if not path.exists("output"):
+            makedirs("output")
+
+        # Write it back to the filename in the output dir
+        with open(path.join("output", "jenkins_%sdays.html" % days),
+                "w+") as f:
+            f.write(template)
