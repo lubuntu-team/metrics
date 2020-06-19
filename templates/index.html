@@ -25,6 +25,7 @@
                                 <th>Average Failing</th>
                                 <th>Average Non-passing</th>
                                 <th>Average Total</th>
+                                <th>Graph for Data</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -34,6 +35,7 @@
                                 {% for avg in page.Jenkins[day] %}
                                 <td>{{ avg }}</td>
                                 {% endfor %}
+				<td><a href="jenkins_{{ day }}days.html">Here</a></td>
                             </tr>
                             {% endfor %}
                         </tbody>
