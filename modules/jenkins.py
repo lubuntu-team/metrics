@@ -157,15 +157,14 @@ class JenkinsModule:
             _data["total"].append(row[3])
 
         # Get human-readable averages and throw it in a dict
-        _nonpassing = sum(_data["nonpassing"]) / len(_data["nonpassing"])
-        _nonpassing = format(_nonpassing, ".1f")
-        _failing = sum(_data["failing"]) / len(_data["failing"])
-        _failing = format(_failing, ".1f")
-        _total = sum(_data["total"]) / len(_data["total"])
-        _total = format(_total, ".1f")
-        average = {"nonpassing": _nonpassing,
-                   "failing": _failing,
-                   "total": _total}
+        average = {}
+        for datatype in ("nonpassing", "failing", "total"):
+            try:
+                num = sum(_data[datatype]) / len(_data[datatype])
+                num = format(num, ".1f")
+            except ZeroDivisionError:
+                num = 0
+            average[datatype] = num
 
         # Assign data to the dict Jinja2 is actually going to use
         jenkins = {"nonpassing": zip(_data["date"], _data["nonpassing"]),
