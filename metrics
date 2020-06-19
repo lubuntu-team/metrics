@@ -90,8 +90,9 @@ def main(module):
     module = module()
 
     # Stage the setup commands to be ran and run them
-    run = [module.sqlite_setup(), module.sqlite_add()]
-    log.debug(sqlite_run(run, db=args.db_location))
+    if not args.no_modify_db:
+        run = [module.sqlite_setup(), module.sqlite_add()]
+        log.debug(sqlite_run(run, db=args.db_location))
 
     # This is going to be a dict of tuples, with the key being the day and
     # the value being a tuple with the averages
@@ -120,6 +121,8 @@ if __name__ == "__main__":
                         help="Specify the location for the SQLite database")
     parser.add_argument("--log", type=str, default="WARNING",
                         help="Default logging level")
+    parser.add_argument("--no-modify-db", action="store_true",
+                        help="Don't insert any data into the DB, just read")
     args = parser.parse_args()
 
     # Ensure the logging level is set properly
