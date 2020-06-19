@@ -52,7 +52,7 @@ def main(module):
     run = []
     run.append(module.sqlite_setup())
     run.append(module.sqlite_add())
-    run.append(module.sqlite_time_range(days=10))
+    #run.append(module.sqlite_time_range(days=10))
     log.debug("Commands to be ran: " + str(run))
 
     # Use --db-location to pass to sqlite
