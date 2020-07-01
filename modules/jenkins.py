@@ -20,7 +20,7 @@ import requests_cache
 import time
 from jenkinsapi.custom_exceptions import NoBuildData
 from jenkinsapi.jenkins import Jenkins
-from jinja2 import Template
+from modules.utilities import *
 from os import getenv, makedirs, path
 
 requests_cache.install_cache("jenkins", backend="sqlite", expire_after=300)
@@ -171,25 +171,14 @@ class JenkinsModule:
                    "failing": zip(_data["date"], _data["failing"]),
                    "total": zip(_data["date"], _data["total"])}
 
-        # Grab our template from templates/ and store it as a Template
-        t_path = path.join("templates", "jenkins.html")
-        with open(t_path) as templatef:
-            template = ""
-            for text in templatef.readlines():
-                template += text
-            template = Template(template)
-
-        # Render the template
-        template = template.render(jenkins=jenkins, average=average, days=days)
-
         # Make the output dir if it doesn't already exist
         if not path.exists("output"):
             makedirs("output")
 
-        # Write it back to the filename in the output dir
-        with open(path.join("output", "jenkins_%sdays.html" % days),
-                  "w+") as f:
-            f.write(template)
+        src = path.join("templates", "jenkins.html")
+        dest = path.join("output", "jenkins_%sdays.html" % days)
+        jinja2_template(src, dest, jenkins=jenkins, average=average,
+                days=days)
 
         # Return the averages for use in the summary
         return (average["nonpassing"], average["failing"], average["total"])

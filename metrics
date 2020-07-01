@@ -18,8 +18,8 @@
 import argparse
 import logging as log
 import sqlite3
-from jinja2 import Template
 from modules.jenkins import JenkinsModule
+from modules.utilities import *
 from os import path
 from shutil import copytree, rmtree
 
@@ -62,26 +62,10 @@ def summary():
     are going to have different averages.
     """
 
-    # Open the template file as a Jinja2 Template
-    t_path = path.join("templates", "index.html")
-    with open(t_path) as templatef:
-        template = ""
-        for text in templatef.readlines():
-            template += text
-        template = Template(template)
-
-    # Render the template with the values from summary_page
+    src = path.join("templates", "index.html")
+    dest = path.join("output", "index.html")
     log.debug("summary_page: " + str(summary_page))
-    template = template.render(page=summary_page)
-
-    # Write it back to the output file
-    # We don't have to worry about creating the output dir, since the
-    # module-specific template rendering should already do this for us
-    #
-    # FIXME: Writing to/from files is done in several places, maybe centralize
-    # the code in its own "internal" module?
-    with open(path.join("output", "index.html"), "w+") as f:
-        f.write(template)
+    jinja2_template(src, dest, page=summary_page)
 
 
 def main(module):
