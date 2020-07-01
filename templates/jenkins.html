@@ -10,12 +10,16 @@
 
         <!-- Import Bootstrap 4.3.1 -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+        <!-- Favicon and page title -->
+        <link rel="icon" type="image/png" href="/assets/favicon.png"/>
+	<title>Jenkins data for the past {{ days }} day{{ "s" if days > 1 }}</title>
     </head>
     <body>
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col" style="text-align: center;">
-                    <h1>Jenkins data for the past {{ days }} day(s)</h1>
+                    <h1>Jenkins data for the past {{ days }} day{{ "s" if days > 1 }}</h1>
                     <canvas id="jenkinschart"></canvas>
                     <h2>Average number of failing jobs: {{ average.failing }}</h2>
                     <h2>Average number of non-passing jobs: {{ average.nonpassing }}</h2>

@@ -21,6 +21,7 @@ import sqlite3
 from jinja2 import Template
 from modules.jenkins import JenkinsModule
 from os import path
+from shutil import copytree, rmtree
 
 ENABLED_MODULES = [JenkinsModule]
 
@@ -143,3 +144,11 @@ if __name__ == "__main__":
 
     # Render the summary page
     summary()
+
+    # Copy the assets
+    # FIXME: clunky and racey
+    try:
+        copytree("assets", "output/assets")
+    except FileExistsError:
+        rmtree("output/assets")
+        copytree("assets", "output/assets")
