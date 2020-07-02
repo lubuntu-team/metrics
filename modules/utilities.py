@@ -15,8 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import configparser
+import os
 from jinja2 import Template
-from os import path
 
 
 def jinja2_template(src, dest, **kwargs):
@@ -41,3 +42,17 @@ def jinja2_template(src, dest, **kwargs):
         f.write(template)
 
     return True
+
+def load_config(path="~/.config/lubuntumetrics"):
+    """Load config from ~/.config/lubuntumetrics or given path"""
+
+    # If it contains ~, ensure that's expanded
+    if "~" in path:
+        path = os.path.expanduser(path)
+
+    # Read from the config file
+    config = configparser.ConfigParser()
+    config.read(path)
+
+    # Return the config as a dict
+    return config

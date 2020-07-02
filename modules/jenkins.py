@@ -37,16 +37,21 @@ class JenkinsModule:
 
         This uses the API_SITE, API_USER, and API_KEY env vars.
         """
-        # Load the API values from the environment variables
-        api_site = getenv("API_SITE")
-        api_user = getenv("API_USER")
-        api_key = getenv("API_KEY")
-        for envvar in [api_site, api_user, api_key]:
+        # Load the config, so we can store secrets outside of env vars
+        config = load_config()
+        in_conf = "jenkins" in config
+
+        # Load the needed secrets either from the config file if it exists
+        # or the env var if it's defined (which takes precedence)
+        site = getenv("API_SITE") or (in_conf and config["jenkins"]["site"])
+        user = getenv("API_USER") or (in_conf and config["jenkins"]["user"])
+        key = getenv("API_KEY") or (in_conf and config["jenkins"]["key"])
+        for envvar in [site, user, key]:
             if not envvar:
                 raise ValueError("API_SITE, API_USER, and API_KEY must be",
                                  "defined")
         # Authenticate to the server
-        server = Jenkins(api_site, username=api_user, password=api_key)
+        server = Jenkins(site, username=user, password=key)
 
         return server
 
