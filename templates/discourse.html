@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- HTML5 compliance -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Import Chart.js 2.9.3 -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js"></script>
+
+        <!-- Import Bootstrap 4.3.1 -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+        <!-- Favicon and page title -->
+        <link rel="icon" type="image/png" href="/assets/favicon.png"/>
+	<title>Discourse data for the past {{ days }} day{{ "s" if days > 1 }}</title>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col" style="text-align: center;">
+                    <h1>Discourse data for the past {{ days }} day{{ "s" if days > 1 }}</h1>
+                    <canvas id="discoursechart"></canvas>
+                    <h2>Average number of open support topics: {{ average.open_support }}</h2>
+                    <h2>Average number of total support topics: {{ average.total_support }}</h2>
+                    <h2>Average percent of (open / total) support topics: {{ average.percent_support }}%</h2>
+                    <h2>Average number of open topics: {{ average.open_all }}</h2>
+                    <h2>Average number of total topics: {{ average.total_all }}</h2>
+                    <h2>Average percent of (open / total) topics: {{ average.percent_all }}%</h2>
+		    <h2><a href="./">Back to summary page</a></h2>
+                </div>
+            </div>
+        </div>
+        <!-- This is the actual chart functionality -->
+        <script>
+            var ctx = document.getElementById("discoursechart").getContext("2d");
+
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Open Support Topics',
+                            backgroundColor: "#FF0000",
+                            borderColor: "#FF0000",
+                            data: [
+                                {% for timestamp, num in discourse.open_support %}
+                                {
+                                    t: new Date({{ timestamp }} * 1000),
+                                    y: {{ num }}
+                                },
+                                {% endfor %}
+                            ]
+                        },
+                        {
+                            label: 'Open Topics',
+                            backgroundColor: "#FFFF00",
+                            borderColor: "#FFFF00",
+                            data: [
+                                {% for timestamp, num in discourse.open_all %}
+                                {
+                                    t: new Date({{ timestamp }} * 1000),
+                                    y: {{ num }}
+                                },
+                                {% endfor %}
+                            ]
+                        },
+                        {
+                            label: 'Total Support Topics',
+                            backgroundColor: "#32CD32",
+                            borderColor: "#32CD32",
+                            data: [
+                                {% for timestamp, num in discourse.total_support %}
+                                {
+                                    t: new Date({{ timestamp }} * 1000),
+                                    y: {{ num }}
+                                },
+                                {% endfor %}
+                            ]
+                        },
+                        {
+                            label: 'Total Topics',
+                            backgroundColor: "#003A72",
+                            //borderColor: "#003A72",
+                            data: [
+                                {% for timestamp, num in discourse.total_all %}
+                                {
+                                    t: new Date({{ timestamp }} * 1000),
+                                    y: {{ num }}
+                                },
+                                {% endfor %}
+                            ]
+                        },
+                    ]
+                },
+                options: {
+                    scales: {
+                        xAxes: [{
+                            type: 'time',
+                            time: {
+                                unit: 'day'
+                            }
+                        }]
+                    }
+                }
+            });
+        </script>
+    </body>
+</html>

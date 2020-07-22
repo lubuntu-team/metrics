@@ -18,12 +18,13 @@
 import argparse
 import logging as log
 import sqlite3
+from modules.discourse import DiscourseModule
 from modules.jenkins import JenkinsModule
 from modules.utilities import *
 from os import path
 from shutil import copytree, rmtree
 
-ENABLED_MODULES = [JenkinsModule]
+ENABLED_MODULES = [DiscourseModule, JenkinsModule]
 
 
 def sqlite_run(command, db, return_output=False):
@@ -89,8 +90,9 @@ def main(module):
     for day in (1, 7, 30, 90, 180):
         # Fetch the data and log to debug
         run = [module.sqlite_time_range(days=day)]
+        log.info(run)
         data = sqlite_run(run, db=args.db_location, return_output=True)
-        log.debug(data)
+        log.info(data)
 
         # Render the template, which also returns the average values
         _averages[day] = module.render_template(day, data)

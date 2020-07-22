@@ -20,30 +20,62 @@
                 </div>
             </div>
             <div class="row justify-content-center">
-                <div class="col" style="text-align: center;">
+                <div class="col-xs-6" style="text-align: center;">
                     <h2>Jenkins Data</h2>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Time (days)</th>
-                                <th>Average Non-passing</th>
-                                <th>Average Failing</th>
-                                <th>Average Total</th>
-                                <th>Graph for Data</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for day in page.Jenkins %}
-                            <tr>
-                                <td>{{ day }}</td>
-                                {% for avg in page.Jenkins[day] %}
-                                <td>{{ avg }}</td>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Time (days)</th>
+                                    <th>Average Non-passing</th>
+                                    <th>Average Failing</th>
+                                    <th>Average Total</th>
+                                    <th>Graph for Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for day in page.Jenkins %}
+                                <tr>
+                                    <td>{{ day }}</td>
+                                    {% for avg in page.Jenkins[day] %}
+                                        <td>{{ avg }}</td>
+                                    {% endfor %}
+                                    <td><a href="jenkins_{{ day }}days.html">Here</a></td>
+                                </tr>
                                 {% endfor %}
-				<td><a href="jenkins_{{ day }}days.html">Here</a></td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-xs-6" style="text-align: center;">
+                    <h2>Discourse Data</h2>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Time (days)</th>
+                                    <th>Average Open Support Topics</th>
+                                    <th>Average Total Support Topics</th>
+                                    <th>Average % (Open / Total) Support Topics</th>
+                                    <th>Average Open Topics</th>
+                                    <th>Average Total Topics</th>
+                                    <th>Average % (Open / Total) Topics</th>
+                                    <th>Graph for Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for day in page.Discourse %}
+                                <tr>
+                                    <td>{{ day }}</td>
+                                    {% for avg in page.Discourse[day] %}
+                                        <td>{{ avg }}</td>
+                                    {% endfor %}
+                                    <td><a href="discourse_{{ day }}days.html">Here</a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
