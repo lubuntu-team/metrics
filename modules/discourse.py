@@ -83,7 +83,6 @@ class DiscourseModule:
                 on_page = len(topics)
                 page += 1
 
-                print("Working on " + category["name"])
                 for topic in topics:
                     # Increment total_all
                     data[4] += 1
@@ -138,7 +137,6 @@ class DiscourseModule:
         date = "strftime('%s', 'now')"
 
         # Craft the str
-        print(data)
         command = "INSERT INTO discourse VALUES ("
         command += "{}, {}, {}, {}, {}, {}, {});".format(date, *data)
 
@@ -176,7 +174,6 @@ class DiscourseModule:
 
         # Use a lambda to map the data into a dict with the keys
         for row in data:
-            print(row)
             _data = {keys[x] : row[x] for x in range(len(row))}
 
             # Add our ephemeral dict to the master dict, and create the key if
